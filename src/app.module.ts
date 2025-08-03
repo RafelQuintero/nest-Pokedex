@@ -4,6 +4,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MongooseModule } from '@nestjs/mongoose'; //VA ubicado aqui porue es un paquene de nestjs
 import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { CommonModule } from './common/common.module';
     //* 5.1. Me creo la refenecia de la base de datos de mongoose
     MongooseModule.forRoot('mongodb://localhost:27017/nest-pokemon'), //* 6. debo clocar como argumento el mismo
     // *url que coloque en tablePlus ('mongodb://localhost:27017/nest-pokemon') y el nombre de la db "nest-pokemon"
-    PokemonModule, CommonModule,
+    PokemonModule, CommonModule, SeedModule,
   ],
 })
 export class AppModule {}
