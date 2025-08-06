@@ -15,25 +15,32 @@ yarn insltall
 3. Tener Nest CLI unstalado en forma global
 
 ```
-npm i -g @nestjs/cli
+      npm i -g @nestjs/cli
 
 ```
 
 4. Levatar la bae de dato "DB"
+
    ....
+
    dokcer-compose up -d
 
-...
+   ...
 
 5.- Inicailizar el proyecto
-...
-yarn start:dev
 
-...
+      ...
+
+       yarn start:dev
+
+       ...
 
 6. Recosntruir la base de datos con la semilla
+
    ...
    http://localhost:3000/api/v2/seed
+
+   ...
 
 .- SI no tenemos ningun pokemon que ee ejecute la intrucción anterior, simpre que estemos en desarrollo
 ...
