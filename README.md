@@ -25,7 +25,13 @@ npm i -g @nestjs/cli
 
 ...
 
-5. Recosntruir la base de datos con la semilla
+5.- Inicailizar el proyecto
+...
+yarn start:dev
+
+...
+
+6. Recosntruir la base de datos con la semilla
    ...
    http://localhost:3000/api/v2/seed
 
