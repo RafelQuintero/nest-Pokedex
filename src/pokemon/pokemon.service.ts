@@ -10,6 +10,7 @@ import { CreatePokemonDto } from './dto/create-pokemon.dto'; //Clase con validac
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity'; //Nuetra clase/esquema definida previamente.
 import { InjectModel } from '@nestjs/mongoose';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
@@ -49,9 +50,20 @@ export class PokemonService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto: PaginationDto) {
     //*Aqui queremos hacer paginaciones pra ver los registro si son muchos
-    const thePokmens = await this.pokemonModel.find();
+    const { limit = 10, offset = 0 } = paginationDto; //?si no se especifica en query
+    // ?estos son lo valres por defecto
+    const thePokmens = await this.pokemonModel
+      .find()
+      .limit(limit) //? Me indica cuantos elementos va mostrar
+      .skip(offset) //?Me inidca desde que elemento ("(offset+1")) va mostrar ("limit").
+      .sort({
+        //?los pokwmon seran ordenado por el número empezando por en numero 1, 2 ,3 ....
+        no: 1,
+      })
+      .select('-__v'); //* eliminamos esto codigo que me genera mongoDB
+
     console.log({ thePokmens: thePokmens });
     if (thePokmens.length === 0) {
       throw new BadRequestException(`Do not Pokemons in DB`);
@@ -165,4 +177,7 @@ export class PokemonService {
       `Can't create Pokemon-Ckeck server logs`,
     );
   }
+}
+function limit(arg0: number) {
+  throw new Error('Function not implemented.');
 }

@@ -8,11 +8,13 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { PokemonService } from './pokemon.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id/parse-mongo-id.pipe';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 //*4.-  Observams que cuando se ejecua una de la api me esta anteponiendo en el parametro del contorlador la pabra "api"
 @Controller('pokemon')
@@ -27,8 +29,11 @@ export class PokemonController {
   }
 
   @Get()
-  findAll() {
-    return this.pokemonService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    //HAgamos una impresion en consola
+    console.log(paginationDto);
+
+    return this.pokemonService.findAll(paginationDto);
   }
 
   @Get(':term')
