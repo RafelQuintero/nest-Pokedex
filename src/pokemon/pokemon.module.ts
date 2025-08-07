@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PokemonService } from './pokemon.service';
 import { PokemonController } from './pokemon.controller';
@@ -9,6 +10,9 @@ import { Pokemon, PokemonSchema } from './entities/pokemon.entity';
   providers: [PokemonService],
   //*14.-  Aqui dentro debo hacer una definicion de módulo
   imports: [
+    //Debemos importar
+    ConfigModule, //para que pueda utilzar las variabes de entorno
+
     //* LO que se indica n el codigod e abjajo es la definicion de mi esquema
 
     MongooseModule.forFeature([

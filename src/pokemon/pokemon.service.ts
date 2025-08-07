@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'; //Decorador que indica que esta clase puede ser intectada como servicio
 // en otors partes de la aplicacion.
+import { ConfigService } from '@nestjs/config';
 import { isValidObjectId, Model } from 'mongoose'; //Es La clase de mongoose que representa un modelo de la base de datos, te dá métodos
 // como: (find,save,findById.etc.).
 import { CreatePokemonDto } from './dto/create-pokemon.dto'; //Clase con validaciones para la data que se recibe desde el cliente.
@@ -14,17 +15,17 @@ import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
-  //? Marca la clase como proveedor (provider), para que NestJS pueda crear una instancia de ella
-  // ?y usarla en cualquier lugar donde se requiera.
-  //?Haciendo  una Inyeccion de depemdencia en el constroctor para poder
-  // ? inicalizarlo que cualquier parte por lo que se hace por medio del constructor.
-
   constructor(
     //?InjectModel(Pokemon.name):  Inyecta el modelo de Mongoose para la colección pokemons.
 
     @InjectModel(Pokemon.name) //*el argumeto es el nombre "name" del pokemon que queremos crear.
     private readonly pokemonModel: Model<Pokemon>, //pokemonModel es nuetra variable que permite interactuar con DB // Hace que no se pueda reasignar la referncia al modelo.("es única")
-  ) {}
+
+    private readonly configService: ConfigService, //Etsa declacion es para poder utilizar las variables de entorno
+  ) {
+    //Mostramos en consola para ver que  nuestro servicio  esta funcionando en el puero indicado.
+    console.log(process.env.DEFAUT_LIMIT); //luego lo puedo quitar para que no aparezca en consola
+  }
   async create(createPokemonDto: CreatePokemonDto) {
     //
     createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase(); //?estoy diciendole
@@ -51,8 +52,12 @@ export class PokemonService {
   }
 
   async findAll(paginationDto: PaginationDto) {
+    //todo: SE quiere tener la variables de entorno mapeados. es decir sin no viene la variable de nentorno ,
+    // todo:  establezco un valor por defecto creando un nuevo fokder que se llame config y en ek un archivo app.cong.ts(este
+    //todo: el archivo de configuracion de las varible de entorno).
+
     //*Aqui queremos hacer paginaciones pra ver los registro si son muchos
-    const { limit = 10, offset = 0 } = paginationDto; //?si no se especifica en query
+    const { limit = 5, offset = 0 } = paginationDto; //?si no se especifica en query
     // ?estos son lo valres por defecto
     const thePokmens = await this.pokemonModel
       .find()
