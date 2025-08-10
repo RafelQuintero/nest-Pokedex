@@ -8,12 +8,14 @@ import { PokemonModule } from './pokemon/pokemon.module';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { EnvConfiguartion } from './config/env.config';
+import { JoinValidationSchema } from './config/joi.validatiom';
 
 @Module({
   imports: [
-    //Nota: simpre se debe pegar al inicio para que funcione correctmente.
+    //Nota: ConfigModule.forRoot simpre se debe pegar al inicio para que funcione correctmente.
     ConfigModule.forRoot({
-      load: [EnvConfiguartion], //Agerva la fincion de validar las variable de entorno
+      load: [EnvConfiguartion], //Agregams la funcion en el modulo para validar las variable de entorno
+      validationSchema: JoinValidationSchema,
     }),
 
     //*5. Este modulo estatico se copio y se pego; del manual de ayuda pdf
@@ -25,19 +27,18 @@ import { EnvConfiguartion } from './config/env.config';
     //                                              antes de colocar "!" es de typescrpt , al colocarle "!"
     //                                               aseguramos que typscript la trate como un string, simre y cuando confie en mi
     //                                              que esor mo es un unidfine.
-    //* 6. debo clocar como argumento el mismo
-    // *url que coloque en tablePlus ('mongodb://localhost:27017/nest-pokemon') y el nombre de la db "nest-pokemon"
+    //*
     PokemonModule,
     CommonModule,
     SeedModule,
   ],
 })
 export class AppModule {
-  //? 1.-  Comon esto es una clase podemos utilizar un constructor para instanciar algo
+  //? 1.-  Como esto es una clase podemos utilizar un constructor para instanciar algo
 
   constructor() {
-    //?2.- Mostromos las varibles de entorno   por la terminal ,que son un bastantes pero no estan la especificadas en el archivo ".env".
-    //console.log(process.env);  //Se quit para que no semostrara todas las variable de entorno ,incluyendo las que costrimos
+    //?2.- Mostromos las varibles de entorno   por la terminal ,que son  bastantes pero no estan la especificadas en el archivo ".env".
+    //console.log(process.env);  //Se quita para que no se muestre todas las variable de entorno ,incluyendo las que constrimos
     //3.- debo Hacer que las variables de entorno que se especificarón  las carge el proyecto.
     //esto se hace copiando un archivo de la guia de nestjs , donde dice varable de entorno.
     // haciendo la instalacion de una libreria. yarn add @nestjs/config

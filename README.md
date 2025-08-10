@@ -27,7 +27,13 @@ yarn insltall
 
    ...
 
-5.- Inicailizar el proyecto
+5.- Clonar el archivo **env.template** y renombrar la copia **.env**
+
+...
+
+6.- Llenar las variable de entorno definidas en el `.env`
+
+7.- Inicailizar el proyecto en dev:
 
       ...
 
@@ -35,15 +41,15 @@ yarn insltall
 
        ...
 
-6. Recosntruir la base de datos con la semilla
+8. Recosntruir la base de datos con la semilla
 
    ...
    http://localhost:3000/api/v2/seed
 
    ...
 
-.- SI no tenemos ningun pokemon que ee ejecute la intrucción anterior, simpre que estemos en desarrollo
-...
+   89.- SI no tenemos ningun pokemon que ee ejecute la intrucción anterior, simpre que estemos en desarrollo
+   ...
 
 ## Stack usado
 

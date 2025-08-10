@@ -22,6 +22,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT!); ///Se puedo sustituir el puero 3000 por su variable de entorno y colocarke ek signo de admiracion
+  // para decirel a tyistript que vien un número.
+  console.log(`Apication run on port: ${process.env.PORT!}`); //*PAra que me lo muetre en consola que la aplicación etsá corriendo.
 }
 bootstrap();

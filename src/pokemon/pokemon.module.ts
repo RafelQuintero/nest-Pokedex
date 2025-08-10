@@ -10,8 +10,8 @@ import { Pokemon, PokemonSchema } from './entities/pokemon.entity';
   providers: [PokemonService],
   //*14.-  Aqui dentro debo hacer una definicion de módulo
   imports: [
-    //Debemos importar
-    ConfigModule, //para que pueda utilzar las variabes de entorno
+    //todo: Debemos importar
+    ConfigModule, //todo: para que pueda utilzar las variabes de entorno
 
     //* LO que se indica n el codigod e abjajo es la definicion de mi esquema
 

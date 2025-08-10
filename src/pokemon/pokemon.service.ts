@@ -15,16 +15,21 @@ import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
+  //todo: Creamos un propiepdad privada
+  private defaultLimit: number; //creamos esta propiedad llamado "defaultLimit" para manejar  la variable de entorno.
+
   constructor(
     //?InjectModel(Pokemon.name):  Inyecta el modelo de Mongoose para la colección pokemons.
 
     @InjectModel(Pokemon.name) //*el argumeto es el nombre "name" del pokemon que queremos crear.
-    private readonly pokemonModel: Model<Pokemon>, //pokemonModel es nuetra variable que permite interactuar con DB // Hace que no se pueda reasignar la referncia al modelo.("es única")
-
-    private readonly configService: ConfigService, //Etsa declacion es para poder utilizar las variables de entorno
+    private readonly pokemonModel: Model<Pokemon>, //*pokemonModel es nuetra variable que permite interactuar con DB // Hace que no se pueda reasignar la referncia al modelo.("es única")
+    //? Inyactamos tambien  ConfigService, que permite utilizar las variables de entorno
+    private readonly configService: ConfigService,
   ) {
-    //Mostramos en consola para ver que  nuestro servicio  esta funcionando en el puero indicado.
-    console.log(process.env.DEFAUT_LIMIT); //luego lo puedo quitar para que no aparezca en consola
+    this.defaultLimit = configService.get<number>('defaultLimit')!; //*  el signo "!" Le indica a typeScript que si viene un número
+    //* la manera de eliminar el undefine , mostremos mostrando en consola la siguiente instrucción
+    //console.log(this.defaultLimit);  // YA puedo elinar el cometario ya me lo muestra por defecto
+    //console.log({ defaultLimit: configService.get<number>('defaultLimit') }); //comprebo que lo que esta llegando en un número.
   }
   async create(createPokemonDto: CreatePokemonDto) {
     //
@@ -34,7 +39,7 @@ export class PokemonService {
 
     //utlizaremos el "cratePokemonDto" para insertarlo en la base de estado ya questo es
     // el body  del pokemon que se quire  grabar en la base de datos "DB".
-    //? Hagamos lun try catch para manejar el error si tarta de registrar un pokemon que ya existe.
+    //? Hagamos un try catch para manejar el error si se quiere registrar un pokemon que ya existe.
     try {
       //* Ingresemos informacion en DB.
       const pokemon = await this.pokemonModel.create(createPokemonDto); //el parametro de create es el createPokemonDto, que es el body
@@ -52,12 +57,12 @@ export class PokemonService {
   }
 
   async findAll(paginationDto: PaginationDto) {
-    //todo: SE quiere tener la variables de entorno mapeados. es decir sin no viene la variable de nentorno ,
-    // todo:  establezco un valor por defecto creando un nuevo fokder que se llame config y en ek un archivo app.cong.ts(este
+    //todo: SE quiere tener la variables de entorno mapeados y  sin no viene la variable de nentorno ,
+    // todo:  establezco un valor por defecto, creando un nuevo fokder que se llame config y en ek un archivo app.cong.ts(este
     //todo: el archivo de configuracion de las varible de entorno).
 
     //*Aqui queremos hacer paginaciones pra ver los registro si son muchos
-    const { limit = 5, offset = 0 } = paginationDto; //?si no se especifica en query
+    const { limit = this.defaultLimit, offset = 0 } = paginationDto; //?si no se especifica en query
     // ?estos son lo valres por defecto
     const thePokmens = await this.pokemonModel
       .find()
