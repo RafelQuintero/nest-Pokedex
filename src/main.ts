@@ -15,10 +15,15 @@ async function bootstrap() {
       //Recurde importa VliadtionPïpe
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true, //transforma tipo ("1" en un número)
+      transform: true, //transforma tipo (  un srting :"1", en un número)
+      transformOptions: {
+        enableImplicitConversion: true, //habilita laconversion en foma implicita
+      },
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT!); ///Se puedo sustituir el puero 3000 por su variable de entorno y colocarke ek signo de admiracion
+  // para decirel a tyistript que vien un número.
+  console.log(`Apication run on port: ${process.env.PORT!}`); //*PAra que me lo muetre en consola que la aplicación etsá corriendo.
 }
 bootstrap();

@@ -4,26 +4,33 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'; //Decorador que indica que esta clase puede ser intectada como servicio
 // en otors partes de la aplicacion.
+import { ConfigService } from '@nestjs/config';
 import { isValidObjectId, Model } from 'mongoose'; //Es La clase de mongoose que representa un modelo de la base de datos, te dá métodos
 // como: (find,save,findById.etc.).
 import { CreatePokemonDto } from './dto/create-pokemon.dto'; //Clase con validaciones para la data que se recibe desde el cliente.
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity'; //Nuetra clase/esquema definida previamente.
 import { InjectModel } from '@nestjs/mongoose';
+import { PaginationDto } from '../common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
-  //? Marca la clase como proveedor (provider), para que NestJS pueda crear una instancia de ella
-  // ?y usarla en cualquier lugar donde se requiera.
-  //?Haciendo  una Inyeccion de depemdencia en el constroctor para poder
-  // ? inicalizarlo que cualquier parte por lo que se hace por medio del constructor.
+  //todo: Creamos un propiepdad privada
+  private defaultLimit: number; //creamos esta propiedad llamado "defaultLimit" para manejar  la variable de entorno.
 
   constructor(
     //?InjectModel(Pokemon.name):  Inyecta el modelo de Mongoose para la colección pokemons.
 
     @InjectModel(Pokemon.name) //*el argumeto es el nombre "name" del pokemon que queremos crear.
-    private readonly pokemonModel: Model<Pokemon>, //pokemonModel es nuetra variable que permite interactuar con DB // Hace que no se pueda reasignar la referncia al modelo.("es única")
-  ) {}
+    private readonly pokemonModel: Model<Pokemon>, //*pokemonModel es nuetra variable que permite interactuar con DB // Hace que no se pueda reasignar la referncia al modelo.("es única")
+    //? Inyactamos tambien  ConfigService, que permite utilizar las variables de entorno
+    private readonly configService: ConfigService,
+  ) {
+    this.defaultLimit = configService.get<number>('defaultLimit')!; //*  el signo "!" Le indica a typeScript que si viene un número
+    //* la manera de eliminar el undefine , mostremos mostrando en consola la siguiente instrucción
+    //console.log(this.defaultLimit);  // YA puedo elinar el cometario ya me lo muestra por defecto
+    //console.log({ defaultLimit: configService.get<number>('defaultLimit') }); //comprebo que lo que esta llegando en un número.
+  }
   async create(createPokemonDto: CreatePokemonDto) {
     //
     createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase(); //?estoy diciendole
@@ -32,7 +39,7 @@ export class PokemonService {
 
     //utlizaremos el "cratePokemonDto" para insertarlo en la base de estado ya questo es
     // el body  del pokemon que se quire  grabar en la base de datos "DB".
-    //? Hagamos lun try catch para manejar el error si tarta de registrar un pokemon que ya existe.
+    //? Hagamos un try catch para manejar el error si se quiere registrar un pokemon que ya existe.
     try {
       //* Ingresemos informacion en DB.
       const pokemon = await this.pokemonModel.create(createPokemonDto); //el parametro de create es el createPokemonDto, que es el body
@@ -49,9 +56,24 @@ export class PokemonService {
     }
   }
 
-  async findAll() {
+  async findAll(paginationDto: PaginationDto) {
+    //todo: SE quiere tener la variables de entorno mapeados y  sin no viene la variable de nentorno ,
+    // todo:  establezco un valor por defecto, creando un nuevo fokder que se llame config y en ek un archivo app.cong.ts(este
+    //todo: el archivo de configuracion de las varible de entorno).
+
     //*Aqui queremos hacer paginaciones pra ver los registro si son muchos
-    const thePokmens = await this.pokemonModel.find();
+    const { limit = this.defaultLimit, offset = 0 } = paginationDto; //?si no se especifica en query
+    // ?estos son lo valres por defecto
+    const thePokmens = await this.pokemonModel
+      .find()
+      .limit(limit) //? Me indica cuantos elementos va mostrar
+      .skip(offset) //?Me inidca desde que elemento ("(offset+1")) va mostrar ("limit").
+      .sort({
+        //?los pokwmon seran ordenado por el número empezando por en numero 1, 2 ,3 ....
+        no: 1,
+      })
+      .select('-__v'); //* eliminamos esto codigo que me genera mongoDB
+
     console.log({ thePokmens: thePokmens });
     if (thePokmens.length === 0) {
       throw new BadRequestException(`Do not Pokemons in DB`);
@@ -165,4 +187,7 @@ export class PokemonService {
       `Can't create Pokemon-Ckeck server logs`,
     );
   }
+}
+function limit(arg0: number) {
+  throw new Error('Function not implemented.');
 }
