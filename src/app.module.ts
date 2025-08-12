@@ -23,7 +23,9 @@ import { JoinValidationSchema } from './config/joi.validatiom';
       rootPath: join(__dirname, '..', 'public'),
     }),
     //* 5.1. Me creo la refenecia de la base de datos de mongoose
-    MongooseModule.forRoot(process.env.MONGODB!), // El error que aparecia : process.env.MONGODB,
+    MongooseModule.forRoot(process.env.MONGODB!, {
+      dbName: 'pokemonsdb', //Esto es par que tomo la base de datos este nombre
+    }), // El error que aparecia : process.env.MONGODB,
     //                                              antes de colocar "!" es de typescrpt , al colocarle "!"
     //                                               aseguramos que typscript la trate como un string, simre y cuando confie en mi
     //                                              que esor mo es un unidfine.
