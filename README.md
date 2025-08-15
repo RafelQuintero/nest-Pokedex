@@ -23,7 +23,7 @@ yarn insltall
 
    ....
 
-   dokcer-compose up -d
+   docker-compose up -d
 
    ...
 

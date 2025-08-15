@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "_contario1": "es lo que contenia start antes del intercambio con start:prod; nest start, levantarlo como producción",
+    "_comentario1": "es lo que contenia start antes del intercambio con start:prod; nest start, levantarlo como producción",
     "start": "node dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -78,6 +78,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   },
+  "_comentario-3": "se coloco la instruccionde abajo para que railway reconozca que el proyecto está corriendo en una vesion node >=20",
   "engines": {
     "node": ">=20"
   }
