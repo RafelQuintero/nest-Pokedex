@@ -48,10 +48,31 @@ yarn insltall
 
    ...
 
-   89.- SI no tenemos ningun pokemon que ee ejecute la intrucción anterior, simpre que estemos en desarrollo
+   89.- SI no tenemos ningun pokemon que se ejecute la intrucción anterior, simpre que estemos en desarrollo
    ...
 
 ## Stack usado
 
 - MongoDB
 - Nest
+
+#Prodution Build
+1.-Crear el archivo `.env.prod`
+2.-Llenar las variable de entorno de produccion
+3.- Construir la nueva imagen
+
+```
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
+
+```
+
+Notas:
+Hacer un deploy manualmente forzado
+
+Heroku redeploy sin cambios:
+
+```
+git commit --allow-empty -m #Tigger Heroku deploy"
+git push heroku <master|main>
+
+```

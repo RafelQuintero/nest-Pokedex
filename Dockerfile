@@ -1,50 +1,53 @@
-# Imgen de linos que ya tiene node instalado
-FROM node:18-alpine3.15
+# Install dependencies only when needed 
+#FROM node:18-alpine3.15 AS deps
+# Se cambo la imange de arrba  por la de abajo que es una imagen mas nueva
+# esta imajen es para node masNode.js >=20
+FROM node:20-alpine AS deps
 
-# Set working directory
-# comando de linux para crear un directorio en ese patch.
-RUN mkdir -p /var/www/pokedex
-#aqui le digo con WORKDIR  es ese el  directorio
-WORKDIR /var/www/pokedex
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
-# Copiar el directorio y su contenido, excepto los foders dist, mongo, node_modules
-# y  el foder .git que esta oculta: estos se declaran en un archivo 
-#   creado en la raiz del proy. llamdo .dockeignore . 
-#en la ruta indicada
-COPY . ./var/www/pokedex
-#copio los json y build en ese patch. nota el ultimo es el patch de destino
-COPY package.json tsconfig.json tsconfig.build.json /var/www/pokedex/
-#instale todas las depedencia de producción
-RUN yarn install --prod
-# Ahora se manda a ejecutar la instrucción que está definino enel package.json
-#que es el que construye  el folder dist de mi aplicación, 
-# ahi está mi archivo main.js
+# Build the app with cache dependencies
+#FROM node:18-alpine3.15 AS builder
+#Se cambia la imamaje por un versio de nodjs mas nueva >=20
+
+FROM node:20-alpine AS builder
+
+
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 RUN yarn build
 
 
-# Dar permiso para ejecutar la applicación
-# Y se crea un nuevo usuario, se desbilta el password  pokeruser
-# o cualquier otro nombre.
-RUN adduser --disabled-password pokeuser
-# se l da acceso a ese usuario "pokeuser" unicamente a ese directorio
-RUN chown -R pokeuser:pokeuser /var/www/pokedex
-# usamos el usuario que creamos.
-USER pokeuser
+# Production image, copy all the files and run next
+#FROM node:18-alpine3.15 AS runner
+#  Se cambia Igual que la primera imagen porla de abajo
+FROM node:20-alpine AS runner
 
-# Limpiar el caché
-RUN yarn cache clean --force
+# Set working directory
+WORKDIR /usr/src/app
 
-# Se expone el puerto 3000 por defecto
-EXPOSE 3000
+COPY package.json yarn.lock ./
 
+RUN yarn install --prod
 
-#cuando termone todo el proceso anterio ejecute el comando yarn start 
-# para mi aolicacion de node.
-CMD [ "yarn","start" ]s
+COPY --from=builder /app/dist ./dist
 
-# quiero que mi aplicacio tenga la base de datos y mi aplicacion de nest 
-#, manteinedola jintas para que sea  parte de la imagen,
-# cuando esta se dockarice ("cundo se einicio").
-# Cunstruyamos la imagen.
- 
- 
+# # Copiar el directorio y su contenido
+# RUN mkdir -p ./pokedex
+
+# COPY --from=builder ./app/dist/ ./app
+# COPY ./.env ./app/.env
+
+# # Dar permiso para ejecutar la applicación
+# RUN adduser --disabled-password pokeuser
+# RUN chown -R pokeuser:pokeuser ./pokedex
+# USER pokeuser
+
+# EXPOSE 3000
+
+CMD [ "node","dist/main" ]
